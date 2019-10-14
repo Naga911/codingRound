@@ -6,18 +6,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
-import org.testng.annotations.*;
 
-import tester.Generics.Chrome;
-
-
-import tester.Generics.PropertyManager;
-
-import java.util.concurrent.TimeUnit;
 
 public class SignInTest {
 
+
     WebDriver driver;
+
+    public SignInTest(WebDriver driver) {
+        PageFactory.initElements(driver, this);
+        this.driver = driver;
+    }
+
     @FindBy(linkText = "Your trips")
     private WebElement Trips;
 
@@ -33,24 +33,14 @@ public class SignInTest {
     @FindBy(id = "errors1")
     private WebElement error;
 
-    public SignInTest(WebDriver driver){
+    @FindBy(xpath = "//a[@id='close']")
+    private WebElement close;
 
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
 
-    }
+    public void login() {
 
-    @Test
-    public void ThrowAnErrorIfSignInDetailsAreMissing() throws Exception {
-
-        //passing url to driver by property file
-        String baseurl = PropertyManager.readproperty("url");
-        driver.get(baseurl);
         Trips.click();
-
         Sign.click();
-
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         //Switching to Frame
         driver.switchTo().frame(popupframe);
@@ -60,8 +50,10 @@ public class SignInTest {
         Assert.assertTrue(errors1.contains("There were errors in your submission"));
         System.out.println(errors1);
 
-    }
+        driver.switchTo().defaultContent();
 
+        close.click();
+    }
 
 
 }
