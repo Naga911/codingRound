@@ -4,9 +4,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
+import tester.Generics.ChromeBrowserFactory;
 import tester.Generics.PropertyManager;
 
 import java.util.concurrent.TimeUnit;
@@ -23,33 +27,42 @@ public class HotelBookingTest {
     @FindBy(id = "travellersOnhome")
     private WebElement travellerSelection;
 
+    @FindBy(linkText = "Indiranagar, Bangalore, Karnataka, India")
+    private WebElement SelectLocation;
 
+    @FindBy(xpath = "//li[contains(@class,'hotelApp')]//a[contains(text(),'Hotels')]")
+    private WebElement Hotel;
 
+    @FindBy(xpath = "//input[@id='Tags']")
+    private WebElement landmark;
 
-    @Test
-    public void shouldBeAbleToSearchForHotels() {
-       WebDriver driver=null ;
-        String baseurl = PropertyManager.readproperty("url");
+    WebDriver driver;
 
-        driver.get(baseurl);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
-        WebElement hotel = driver.findElement(By.xpath("//li[contains(@class,'hotelApp')]//a[contains(text(),'Hotels')]"));
-        hotel.click();
-        //hotel.click();
-        WebElement landmark = driver.findElement(By.xpath("//input[@id='Tags']"));
-        landmark.sendKeys("Indiranagar, Bangalore");
-
-
-        //   new Select(travellerSelection).selectByVisibleText("1 room, 2 adults");
-        WebElement searchbutton = driver.findElement(By.xpath("//input[@id='SearchHotelsButton']"));
-        searchbutton.click();
-
-
+    public HotelBookingTest(WebDriver driver) {
+        PageFactory.initElements(driver, this);
+        this.driver = driver;
     }
 
 
+    public void shouldBeAbleToSearchForHotels() {
 
+
+        Hotel.click();
+        landmark.sendKeys("Indiranagar, Bangalore");
+        System.out.println("hotel");
+
+        SelectLocation.click();
+
+        new Select(travellerSelection).selectByVisibleText("1 room, 2 adults");
+        WebElement searchbutton = driver.findElement(By.xpath("//input[@id='SearchHotelsButton']"));
+        searchbutton.click();
+
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "Cleartrip | Bangalore";
+        Assert.assertEquals(expectedTitle,actualTitle);
+
+
+    }
 
 
 }
