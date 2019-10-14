@@ -6,6 +6,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -14,14 +16,20 @@ import java.util.List;
 
 public class FlightBookingTest {
 
-    WebDriver driver = new ChromeDriver();
+    WebDriver driver;
+
+    @FindBy(xpath = "//span[contains(text(),'Flights')]")
+    private WebElement flight;
 
 
-    @Test
-    public void testThatResultsAppearForAOneWayJourney() {
+    public FlightBookingTest(WebDriver driver) {
+        PageFactory.initElements(driver, this);
+        this.driver = driver;
+    }
 
-        setDriverPath();
-        driver.get("https://www.cleartrip.com/");
+    public void testOneWayJourney() {
+
+        flight.click();
         waitFor(2000);
         driver.findElement(By.id("OneWay")).click();
 
@@ -34,8 +42,8 @@ public class FlightBookingTest {
         List<WebElement> originOptions = driver.findElement(By.id("ui-id-1")).findElements(By.tagName("li"));
         originOptions.get(0).click();
 
-        driver.findElement(By.id("toTag")).clear();
-        driver.findElement(By.id("toTag")).sendKeys("Delhi");
+        driver.findElement(By.id("ToTag")).clear();
+        driver.findElement(By.id("ToTag")).sendKeys("Delhi");
 
         //wait for the auto complete options to appear for the destination
 
@@ -59,7 +67,13 @@ public class FlightBookingTest {
     }
 
 
-    
+    private void waitFor(int durationInMilliSeconds) {
+        try {
+            Thread.sleep(durationInMilliSeconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 
 
     private boolean isElementPresent(By by) {
@@ -71,6 +85,5 @@ public class FlightBookingTest {
         }
     }
 
-   
-    }
+
 }
